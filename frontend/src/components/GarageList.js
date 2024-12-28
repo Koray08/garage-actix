@@ -1,22 +1,37 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, Button, Container, Card, Form, Row, Col } from "react-bootstrap";
+import {
+  Table,
+  Button,
+  Container,
+  Card,
+  Form,
+  Row,
+  Col,
+} from "react-bootstrap";
 
 const GarageList = () => {
-
   const [garages, setGarages] = useState([]);
-  const [newGarage, setNewGarage] = useState({ name: "", location: "",city:"", capacity: 0 });
+  const [newGarage, setNewGarage] = useState({
+    name: "",
+    location: "",
+    city: "",
+    capacity: 0,
+  });
   const [isUpdating, setIsUpdating] = useState(false);
   const [garageToUpdate, setGarageToUpdate] = useState(null);
   const [filterCity, setFilterCity] = useState("");
   const [reportData, setReportData] = useState([]);
-  const [reportFilter, setReportFilter] = useState({ garageId: "", startDate: "", endDate: "" });
+  const [reportFilter, setReportFilter] = useState({
+    garageId: "",
+    startDate: "",
+    endDate: "",
+  });
   const [garageFormData, setGarageFormData] = useState({
     name: "",
     location: "",
     capacity: "",
   });
-  
 
   const fetchGarages = async () => {
     try {
@@ -36,21 +51,24 @@ const GarageList = () => {
         alert("Capacity must be a positive number.");
         return;
       }
-  
+
       const garageData = {
         name: newGarage.name,
         location: newGarage.location,
         city: newGarage.city,
         capacity,
       };
-  
+
       console.log("Garage data to be sent:", garageData);
-  
-      const response = await axios.post("http://localhost:8088/garages", garageData);
+
+      const response = await axios.post(
+        "http://localhost:8088/garages",
+        garageData
+      );
       alert("Garage added successfully!");
-  
+
       setGarages([...garages, response.data]);
-  
+
       setNewGarage({
         name: "",
         location: "",
@@ -62,13 +80,13 @@ const GarageList = () => {
       alert("An error occurred while adding the garage.");
     }
   };
-  
+
   const handleUpdateGarage = async () => {
     if (!garageToUpdate || !garageToUpdate.id) {
       alert("No garage selected for update.");
       return;
     }
-  
+
     try {
       const garageData = {
         name: garageToUpdate.name,
@@ -76,13 +94,16 @@ const GarageList = () => {
         city: garageToUpdate.city,
         capacity: parseInt(garageToUpdate.capacity, 10),
       };
-  
-      await axios.put(`http://localhost:8088/garages/${garageToUpdate.id}`, garageData);
+
+      await axios.put(
+        `http://localhost:8088/garages/${garageToUpdate.id}`,
+        garageData
+      );
       alert("Garage updated successfully!");
-  
+
       // Обновяване на списъка с гаражи
       fetchGarages();
-  
+
       // Нулиране на формата
       resetForm();
     } catch (error) {
@@ -90,7 +111,7 @@ const GarageList = () => {
       alert("An error occurred while updating the garage.");
     }
   };
-  
+
   const resetForm = () => {
     setGarageToUpdate(null);
     setIsUpdating(false);
@@ -101,8 +122,7 @@ const GarageList = () => {
       capacity: "",
     });
   };
-  
-  
+
   const handleDeleteGarage = async (garageId) => {
     if (window.confirm("Are you sure you want to delete this garage?")) {
       try {
@@ -113,7 +133,7 @@ const GarageList = () => {
         console.error("Error deleting garage:", error);
       }
     }
-  };  
+  };
 
   const fetchGarageReport = async () => {
     const { garageId, startDate, endDate } = reportFilter;
@@ -124,13 +144,17 @@ const GarageList = () => {
     }
 
     try {
-      const response = await axios.get("http://localhost:8088/garages/dailyAvailabilityReport", {
-        params: { garageId, startDate, endDate },
-      });
+      const response = await axios.get(
+        "http://localhost:8088/garages/dailyAvailabilityReport",
+        {
+          params: { garageId, startDate, endDate },
+        }
+      );
 
       const modifiedData = response.data.map((entry) => ({
         ...entry,
-        requests: entry.requests > 0 ? `${entry.requests} requests` : "No Requests",
+        requests:
+          entry.requests > 0 ? `${entry.requests} requests` : "No Requests",
       }));
 
       console.log("Modified Data:", modifiedData);
@@ -141,11 +165,10 @@ const GarageList = () => {
     }
   };
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log(`Field changed: ${name}, Value: ${value}`);
-  
+
     if (isUpdating) {
       setGarageToUpdate((prevGarage) => ({ ...prevGarage, [name]: value }));
     } else {
@@ -156,7 +179,7 @@ const GarageList = () => {
     resetGarageForm(); // Нулира формуляра за гаражи
     setIsUpdating(false); // Връща режима на добавяне
   };
-  
+
   const resetGarageForm = () => {
     setGarageFormData({
       name: "",
@@ -164,8 +187,6 @@ const GarageList = () => {
       capacity: "", // Примерни полета, които можете да адаптирате
     });
   };
-  
-  
 
   const handleReportFilterChange = (e) => {
     const { name, value } = e.target;
@@ -194,7 +215,6 @@ const GarageList = () => {
                     value={filterCity}
                     onChange={(e) => setFilterCity(e.target.value)}
                   />
-
                 </Form.Group>
               </Col>
             </Row>
@@ -218,15 +238,25 @@ const GarageList = () => {
                   <td>{garage.capacity}</td>
                   <td>
                     <Button
-                      style={{ backgroundColor: "#FFC107", border: "none", color: "#000000" }}
+                      style={{
+                        backgroundColor: "#FFC107",
+                        border: "none",
+                        color: "#000000",
+                      }}
                       size="sm"
                       className="me-2"
-                      onClick={() => setGarageToUpdate(garage) || setIsUpdating(true)}
+                      onClick={() =>
+                        setGarageToUpdate(garage) || setIsUpdating(true)
+                      }
                     >
                       Edit
                     </Button>
                     <Button
-                      style={{ backgroundColor: "#000000", border: "none", color: "#FFC107" }}
+                      style={{
+                        backgroundColor: "#000000",
+                        border: "none",
+                        color: "#FFC107",
+                      }}
                       size="sm"
                       onClick={() => handleDeleteGarage(garage.id)}
                     >
@@ -237,7 +267,9 @@ const GarageList = () => {
               ))}
             </tbody>
           </Table>
-          <h4 className="mt-4">{isUpdating ? "Update Garage" : "Add a New Garage"}</h4>
+          <h4 className="mt-4">
+            {isUpdating ? "Update Garage" : "Add a New Garage"}
+          </h4>
           <Form>
             <Row>
               <Col md={6}>
@@ -247,7 +279,9 @@ const GarageList = () => {
                     type="text"
                     name="name"
                     placeholder="Enter name"
-                    value={isUpdating ? garageToUpdate?.name || "" : newGarage.name}
+                    value={
+                      isUpdating ? garageToUpdate?.name || "" : newGarage.name
+                    }
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -259,7 +293,11 @@ const GarageList = () => {
                     type="text"
                     name="location"
                     placeholder="Enter location"
-                    value={isUpdating ? garageToUpdate?.location || "" : newGarage.location}
+                    value={
+                      isUpdating
+                        ? garageToUpdate?.location || ""
+                        : newGarage.location
+                    }
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -271,7 +309,9 @@ const GarageList = () => {
                     type="text"
                     name="city"
                     placeholder="Enter City"
-                    value={isUpdating ? garageToUpdate?.city || "" : newGarage.city}
+                    value={
+                      isUpdating ? garageToUpdate?.city || "" : newGarage.city
+                    }
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -283,43 +323,48 @@ const GarageList = () => {
                     type="number"
                     name="capacity"
                     placeholder="Enter capacity"
-                    value={isUpdating ? garageToUpdate?.capacity || "" : newGarage.capacity}
+                    value={
+                      isUpdating
+                        ? garageToUpdate?.capacity || ""
+                        : newGarage.capacity
+                    }
                     onChange={handleChange}
                   />
                 </Form.Group>
               </Col>
             </Row>
             <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-  {/* Бутон за добавяне или обновяване на гараж */}
-  <Button
-    style={{ backgroundColor: "#FFC107", border: "none", color: "#000000" }}
-    onClick={isUpdating ? handleUpdateGarage : handleAddGarage}
-  >
-    {isUpdating ? "Update Garage" : "Add Garage"}
-  </Button>
+              {/* Бутон за добавяне или обновяване на гараж */}
+              <Button
+                style={{
+                  backgroundColor: "#FFC107",
+                  border: "none",
+                  color: "#000000",
+                }}
+                onClick={isUpdating ? handleUpdateGarage : handleAddGarage}
+              >
+                {isUpdating ? "Update Garage" : "Add Garage"}
+              </Button>
 
-  {/* Бутон Cancel, показва се само при режим на обновяване */}
-  {isUpdating && (
-    <Button
-      style={{
-        backgroundColor: "#6c757d",
-        border: "none",
-        color: "#ffffff",
-      }}
-      onClick={handleCancelGarageUpdate}
-    >
-      Cancel
-    </Button>
-  )}
-</div>
-
-
+              {/* Бутон Cancel, показва се само при режим на обновяване */}
+              {isUpdating && (
+                <Button
+                  style={{
+                    backgroundColor: "#6c757d",
+                    border: "none",
+                    color: "#ffffff",
+                  }}
+                  onClick={handleCancelGarageUpdate}
+                >
+                  Cancel
+                </Button>
+              )}
+            </div>
           </Form>
           <h4 className="mt-4">Garage Report</h4>
           <Form>
             <Row>
               <Col md={4}>
-
                 <Form.Group className="mb-3">
                   <Form.Label>Garage</Form.Label>
                   <Form.Select
@@ -360,7 +405,11 @@ const GarageList = () => {
               </Col>
             </Row>
             <Button
-              style={{ backgroundColor: "#FFC107", border: "none", color: "#000000" }}
+              style={{
+                backgroundColor: "#FFC107",
+                border: "none",
+                color: "#000000",
+              }}
               className="w-100"
               onClick={fetchGarageReport}
             >
@@ -387,7 +436,9 @@ const GarageList = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="3">No data available for the selected criteria.</td>
+                  <td colSpan="3">
+                    No data available for the selected criteria.
+                  </td>
                 </tr>
               )}
             </tbody>
@@ -399,7 +450,3 @@ const GarageList = () => {
 };
 
 export default GarageList;
-
-
-
-
