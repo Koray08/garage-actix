@@ -1,0 +1,673 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "OpenAPI definition", "version": "v0" },
+  "servers": [
+    { "url": "http://localhost:8088", "description": "Generated server url" }
+  ],
+  "paths": {
+    "/maintenance/{id}": {
+      "get": {
+        "tags": ["maintenance-controller"],
+        "operationId": "getMaintenanceById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseMaintenanceDTO"
+                }
+              }
+            }
+          },
+          "404": { "description": "Resource not found" },
+          "400": { "description": "Bad request" }
+        }
+      },
+      "put": {
+        "tags": ["maintenance-controller"],
+        "operationId": "updateMaintenance",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateMaintenanceDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Resource updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseMaintenanceDTO"
+                }
+              }
+            }
+          },
+          "404": { "description": "Resource not found" },
+          "400": { "description": "Bad request" }
+        }
+      },
+      "delete": {
+        "tags": ["maintenance-controller"],
+        "operationId": "deleteMaintenance",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "404": { "description": "Resource not found" },
+          "400": { "description": "Bad request" },
+          "200": {
+            "description": "Resource deleted",
+            "content": { "application/json": {} }
+          }
+        }
+      }
+    },
+    "/garages/{id}": {
+      "get": {
+        "tags": ["garage-controller"],
+        "operationId": "getGarageById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseGarageDTO" }
+              }
+            }
+          },
+          "404": { "description": "Resource not found" },
+          "400": { "description": "Bad request" }
+        }
+      },
+      "put": {
+        "tags": ["garage-controller"],
+        "operationId": "updateGarage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateGarageDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": { "description": "Resource not found" },
+          "400": { "description": "Bad request" },
+          "200": {
+            "description": "Resource updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseGarageDTO" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["garage-controller"],
+        "operationId": "deleteGarageById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted",
+            "content": {
+              "application/json": { "schema": { "type": "boolean" } }
+            }
+          },
+          "404": { "description": "Resource not found" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/cars/{id}": {
+      "get": {
+        "tags": ["car-controller"],
+        "operationId": "getCarById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseCarDTO" }
+              }
+            }
+          },
+          "404": { "description": "Resource not found" },
+          "400": { "description": "Bad request" }
+        }
+      },
+      "put": {
+        "tags": ["car-controller"],
+        "operationId": "updateCar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateCarDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "404": { "description": "Resource not found" },
+          "400": { "description": "Bad request" },
+          "200": {
+            "description": "Resource updated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseCarDTO" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["car-controller"],
+        "operationId": "deleteCarById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource deleted",
+            "content": {
+              "application/json": { "schema": { "type": "boolean" } }
+            }
+          },
+          "404": { "description": "Resource not found" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/maintenance": {
+      "get": {
+        "tags": ["maintenance-controller"],
+        "operationId": "getAllMaintenances",
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "garageId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resources found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ResponseMaintenanceDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request" }
+        }
+      },
+      "post": {
+        "tags": ["maintenance-controller"],
+        "operationId": "createMaintenance",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateMaintenanceDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseMaintenanceDTO"
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/garages": {
+      "get": {
+        "tags": ["garage-controller"],
+        "operationId": "getAllGarages",
+        "parameters": [
+          {
+            "name": "city",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": { "description": "Bad request" },
+          "200": {
+            "description": "Resources found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ResponseGarageDTO" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["garage-controller"],
+        "operationId": "createGarage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateGarageDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseGarageDTO" }
+              }
+            }
+          },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/cars": {
+      "get": {
+        "tags": ["car-controller"],
+        "operationId": "getAllCars",
+        "parameters": [
+          {
+            "name": "carMake",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "garageId",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "fromYear",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "toYear",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resources found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ResponseCarDTO" }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request" }
+        }
+      },
+      "post": {
+        "tags": ["car-controller"],
+        "operationId": "createCar",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCarDTO" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": { "description": "Bad request" },
+          "200": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResponseCarDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/maintenance/monthlyRequestsReport": {
+      "get": {
+        "tags": ["maintenance-controller"],
+        "operationId": "monthlyRequestsReport",
+        "parameters": [
+          {
+            "name": "garageId",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "startMonth",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "endMonth",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resources found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MonthlyRequestsReportDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/garages/dailyAvailabilityReport": {
+      "get": {
+        "tags": ["garage-controller"],
+        "operationId": "getGarageReport",
+        "parameters": [
+          {
+            "name": "garageId",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "date" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resources found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GarageDailyAvailabilityReportDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UpdateMaintenanceDTO": {
+        "required": ["garageId"],
+        "type": "object",
+        "properties": {
+          "carId": { "type": "integer", "format": "int64" },
+          "serviceType": { "type": "string" },
+          "scheduledDate": { "type": "string", "format": "date" },
+          "garageId": { "type": "integer", "format": "int64" }
+        }
+      },
+      "ResponseMaintenanceDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "carId": { "type": "integer", "format": "int64" },
+          "carName": { "type": "string" },
+          "serviceType": { "type": "string" },
+          "scheduledDate": { "type": "string", "format": "date" },
+          "garageId": { "type": "integer", "format": "int64" },
+          "garageName": { "type": "string" }
+        }
+      },
+      "UpdateGarageDTO": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "location": { "type": "string" },
+          "capacity": { "type": "integer", "format": "int32" },
+          "city": { "type": "string" }
+        }
+      },
+      "ResponseGarageDTO": {
+        "required": ["capacity", "city", "id", "location", "name"],
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "name": { "type": "string" },
+          "location": { "type": "string" },
+          "city": { "type": "string" },
+          "capacity": { "type": "integer", "format": "int32" }
+        }
+      },
+      "UpdateCarDTO": {
+        "type": "object",
+        "properties": {
+          "make": { "type": "string" },
+          "model": { "type": "string" },
+          "productionYear": { "type": "integer", "format": "int32" },
+          "licensePlate": { "type": "string" },
+          "garageIds": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int64" }
+          }
+        }
+      },
+      "ResponseCarDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "make": { "type": "string" },
+          "model": { "type": "string" },
+          "productionYear": { "type": "integer", "format": "int32" },
+          "licensePlate": { "type": "string" },
+          "garages": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ResponseGarageDTO" }
+          }
+        }
+      },
+      "CreateMaintenanceDTO": {
+        "required": ["carId", "garageId", "scheduledDate", "serviceType"],
+        "type": "object",
+        "properties": {
+          "garageId": { "type": "integer", "format": "int64" },
+          "carId": { "type": "integer", "format": "int64" },
+          "serviceType": { "type": "string" },
+          "scheduledDate": { "type": "string", "format": "date" }
+        }
+      },
+      "CreateGarageDTO": {
+        "required": ["capacity", "city", "location", "name"],
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "location": { "type": "string" },
+          "city": { "type": "string" },
+          "capacity": { "type": "integer", "format": "int32" }
+        }
+      },
+      "CreateCarDTO": {
+        "type": "object",
+        "properties": {
+          "make": { "type": "string" },
+          "model": { "type": "string" },
+          "productionYear": { "type": "integer", "format": "int32" },
+          "licensePlate": { "type": "string" },
+          "garageIds": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int64" }
+          }
+        }
+      },
+      "MonthlyRequestsReportDTO": {
+        "type": "object",
+        "properties": {
+          "yearMonth": {
+            "type": "object",
+            "properties": {
+              "year": { "type": "integer", "format": "int32" },
+              "month": {
+                "type": "string",
+                "enum": [
+                  "JANUARY",
+                  "FEBRUARY",
+                  "MARCH",
+                  "APRIL",
+                  "MAY",
+                  "JUNE",
+                  "JULY",
+                  "AUGUST",
+                  "SEPTEMBER",
+                  "OCTOBER",
+                  "NOVEMBER",
+                  "DECEMBER"
+                ]
+              },
+              "leapYear": { "type": "boolean" },
+              "monthValue": { "type": "integer", "format": "int32" }
+            }
+          },
+          "requests": { "type": "integer", "format": "int32" }
+        }
+      },
+      "GarageDailyAvailabilityReportDTO": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "requests": { "type": "integer", "format": "int32" },
+          "availableCapacity": { "type": "integer", "format": "int32" }
+        }
+      }
+    }
+  }
+}
