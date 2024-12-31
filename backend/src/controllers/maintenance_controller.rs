@@ -1,6 +1,7 @@
 use crate::app_state::AppState; 
 use crate::models::maintenance::{CreateMaintenanceDTO, ResponseMaintenanceDTO, Maintenance};
 use actix_web::{web, HttpResponse, Responder}; 
+use crate::models::maintenance::{UpdateMaintenanceDTO};
 use serde_json::json;
 use std::collections::HashMap;
 use log::{error, info};
@@ -73,6 +74,117 @@ pub async fn create_maintenance(
             HttpResponse::InternalServerError().json(json!({
                 "error": "Failed to create maintenance",
                 "details": err.to_string()
+            }))
+        }
+    }
+}
+
+
+pub async fn edit_maintenance(
+    id: web::Path<String>,
+    maintenance_req: web::Json<UpdateMaintenanceDTO>, 
+    data: web::Data<AppState>,
+) -> impl Responder {
+    info!(
+        "Received request to update maintenance with ID {}: {:?}",
+        id, maintenance_req
+    );
+
+    let maintenance_id = id.as_str();
+
+    let mut transaction = match data.pool.begin().await {
+        Ok(tx) => tx,
+        Err(err) => {
+            error!("Failed to start transaction: {:?}", err);
+            return HttpResponse::InternalServerError().json(json!({
+                "error": "Failed to start transaction",
+                "details": err.to_string()
+            }));
+        }
+    };
+
+    let car_id = maintenance_req.car_id.as_deref();
+    let garage_id = maintenance_req.garage_id.as_str();
+    let service_type = maintenance_req.service_type.as_deref();
+    let scheduled_date = maintenance_req.scheduled_date.as_deref();
+
+    if let Err(err) = sqlx::query!(
+        r#"
+        UPDATE maintenance
+        SET 
+            car_id = COALESCE(?, car_id), 
+            garage_id = COALESCE(?, garage_id), 
+            service_type = COALESCE(?, service_type), 
+            scheduled_date = COALESCE(?, scheduled_date)
+        WHERE id = ?
+        "#,
+        car_id,
+        garage_id,
+        service_type,
+        scheduled_date,
+        maintenance_id
+    )
+    .execute(&mut *transaction)
+    .await
+    {
+        error!("Failed to update maintenance: {:?}", err);
+        let _ = transaction.rollback().await;
+        return HttpResponse::InternalServerError().json(json!({
+            "error": "Failed to update maintenance",
+            "details": err.to_string()
+        }));
+    }
+
+    if let Err(err) = transaction.commit().await {
+        error!("Failed to commit transaction: {:?}", err);
+        return HttpResponse::InternalServerError().json(json!({
+            "error": "Failed to finalize update",
+            "details": err.to_string()
+        }));
+    }
+
+    HttpResponse::Ok().json(json!({
+        "id": maintenance_id,
+        "updated": true,
+    }))
+}
+
+pub async fn delete_maintenance(
+    id: web::Path<String>,
+    data: web::Data<AppState>,
+) -> impl Responder {
+    info!("Received request to delete maintenance with ID {}", id);
+
+    let maintenance_id = id.as_str();
+
+    match sqlx::query!(
+        r#"
+        DELETE FROM maintenance
+        WHERE id = ?
+        "#,
+        maintenance_id
+    )
+    .execute(&data.pool)
+    .await
+    {
+        Ok(result) => {
+            if result.rows_affected() == 0 {
+                error!("Maintenance with ID {} not found", maintenance_id);
+                HttpResponse::NotFound().json(json!({
+                    "error": "Maintenance not found",
+                }))
+            } else {
+                HttpResponse::Ok().json(json!({
+                    "id": maintenance_id,
+                    "deleted": true,
+                }))
+            }
+        }
+        Err(err) => {
+            error!("Failed to delete maintenance: {:?}", err);
+            HttpResponse::InternalServerError().json(json!({
+                "error": "Failed to delete maintenance",
+                "details": err.to_string(),
             }))
         }
     }
