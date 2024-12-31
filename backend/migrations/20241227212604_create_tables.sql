@@ -1,6 +1,6 @@
 -- Table for garages
 CREATE TABLE garages (
-    id TEXT PRIMARY KEY, -- Uuid as TEXT
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     location TEXT NOT NULL,
     city TEXT NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE garages (
 
 -- Table for cars
 CREATE TABLE cars (
-    id TEXT PRIMARY KEY, -- Uuid as TEXT
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     make TEXT NOT NULL,
     model TEXT NOT NULL,
     production_year INTEGER NOT NULL,

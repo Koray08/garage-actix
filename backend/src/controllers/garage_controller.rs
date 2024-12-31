@@ -15,7 +15,7 @@ pub async fn get_all_garages(data: web::Data<AppState>) -> impl Responder {
             let garages: Vec<Garage> = rows
                 .into_iter()
                 .map(|row| Garage {
-                    id: row.id.unwrap(),
+                    id: row.id,
                     name: row.name,
                     location: row.location,
                     city: row.city,
@@ -33,10 +33,8 @@ pub async fn create_garage(
     data: web::Data<AppState>,
     garage_req: web::Json<CreateGarageRequest>,
 ) -> impl Responder {
-    let new_id = Uuid::new_v4().to_string();
     let result = sqlx::query!(
-        "INSERT INTO garages (id, name, location, city, capacity) VALUES (?, ?, ?, ?, ?)",
-        new_id,
+        "INSERT INTO garages (name, location, city, capacity) VALUES (?, ?, ?, ?)",
         garage_req.name,
         garage_req.location,
         garage_req.city,
@@ -46,7 +44,9 @@ pub async fn create_garage(
     .await;
 
     match result {
-        Ok(_) => {
+        Ok(query_result) => {
+            let new_id = query_result.last_insert_rowid();
+
             let garage = Garage {
                 id: new_id,
                 name: garage_req.name.clone(),
@@ -54,9 +54,12 @@ pub async fn create_garage(
                 city: garage_req.city.clone(),
                 capacity: garage_req.capacity,
             };
+
             HttpResponse::Ok().json(garage)
         }
-        Err(_) => HttpResponse::InternalServerError().body("Failed to create garage"),
+        Err(err) => {
+            HttpResponse::InternalServerError().json(format!("Failed to create garage: {}", err))
+        }
     }
 }
 
@@ -64,7 +67,7 @@ pub async fn delete_garage(
     data: web::Data<AppState>,
     garage_id: web::Path<String>,
 ) -> impl Responder {
-    let id = garage_id.into_inner(); // Store the temporary value in a variable
+    let id = garage_id.into_inner(); 
     let result = sqlx::query!(
         "DELETE FROM garages WHERE id = ?",
         id
@@ -91,7 +94,7 @@ pub async fn edit_garage(
     garage_id: web::Path<String>,
     garage_req: web::Json<EditGarageRequest>,
 ) -> impl Responder {
-    let id = garage_id.into_inner(); // Store the temporary value in a variable
+    let id = garage_id.into_inner(); 
     let result = sqlx::query!(
         "UPDATE garages 
         SET 
@@ -119,7 +122,6 @@ pub async fn get_single_garage(
     data: web::Data<AppState>,
     garage_id: web::Path<String>,
 ) -> impl Responder {
-    // Store the garage_id in a variable
     let id = garage_id.into_inner();
 
     let result = sqlx::query!(
@@ -132,7 +134,7 @@ pub async fn get_single_garage(
     match result {
         Ok(row) => {
             let garage = Garage {
-                id: row.id.unwrap(),
+                id: row.id,
                 name: row.name,
                 location: row.location,
                 city: row.city,

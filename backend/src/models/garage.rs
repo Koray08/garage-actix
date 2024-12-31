@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Garage {
-    pub id: String,
+    pub id: i64,
     pub name: String,
     pub location: String,
     pub city: String,
