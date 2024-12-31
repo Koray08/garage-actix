@@ -263,25 +263,13 @@ pub async fn edit_car(
 
     if let Some(garage_ids) = &car_req.garage_ids {
         for garage_id in garage_ids {
-            let parsed_id: i64 = match garage_id.parse() {
-                Ok(val) => val,
-                Err(err) => {
-                    error!("Invalid garage_id format: {:?}", err);
-                    let _ = transaction.rollback().await;
-                    return HttpResponse::BadRequest().json(json!({
-                        "error": "Invalid garage_id format",
-                        "details": err.to_string()
-                    }));
-                }
-            };
-
             if let Err(err) = sqlx::query!(
                 r#"
                 INSERT INTO car_garages (car_id, garage_id)
                 VALUES (?, ?)
                 "#,
                 car_id,
-                parsed_id
+                garage_id
             )
             .execute(&mut *transaction)
             .await

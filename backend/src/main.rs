@@ -8,6 +8,7 @@ use app_state::AppState;
 use controllers::{
     car_controller::{create_car, get_all_cars, delete_car, edit_car},
     garage_controller::{create_garage, get_all_garages, edit_garage, delete_garage, get_single_garage},
+    maintenance_controller::{create_maintenance, get_all_maintenances},
 };
 use sqlx::SqlitePool;
 
@@ -42,6 +43,8 @@ async fn main() -> std::io::Result<()> {
             .route("/cars", web::post().to(create_car))
             .route("/cars/{id}", web::put().to(edit_car))
             .route("/cars/{id}", web::delete().to(delete_car))
+            .route("/maintenance", web::get().to(get_all_maintenances))
+            .route("/maintenance", web::post().to(create_maintenance)) 
     })
     .bind("127.0.0.1:8088")?
     .run()

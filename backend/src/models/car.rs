@@ -21,6 +21,6 @@ pub struct CreateCarRequest {
     pub model: String,
     pub production_year: i64,
     pub license_plate: String,
-    pub garage_ids: Option<Vec<String>>, 
+    pub garage_ids: Option<Vec<i64>>, 
 }
 

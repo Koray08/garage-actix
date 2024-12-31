@@ -32,3 +32,11 @@ CREATE TABLE maintenance_requests (
     scheduled_date TEXT NOT NULL,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE maintenance (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    car_id TEXT NOT NULL,       -- Changed to TEXT
+    garage_id TEXT NOT NULL,    -- Changed to TEXT
+    service_type TEXT NOT NULL,
+    scheduled_date TEXT NOT NULL
+);
