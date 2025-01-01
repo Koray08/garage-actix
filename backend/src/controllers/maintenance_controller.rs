@@ -4,7 +4,7 @@ use actix_web::{web, HttpResponse, Responder};
 use crate::models::maintenance::{UpdateMaintenanceDTO};
 use serde_json::json;
 use std::collections::HashMap;
-use log::{error, info};
+use log::{error, info, warn};
 
 pub async fn get_all_maintenances(
     data: web::Data<AppState>,
@@ -39,6 +39,50 @@ pub async fn get_all_maintenances(
     }
 }
 
+pub async fn get_maintenance_by_id(
+    id: web::Path<i64>,
+    data: web::Data<AppState>,
+) -> impl Responder {
+    let maintenance_id = id.into_inner();
+    info!("Fetching maintenance with ID: {}", maintenance_id);
+
+    match sqlx::query_as!(
+        ResponseMaintenanceDTO,
+        r#"
+        SELECT
+            maintenance.id,
+            maintenance.car_id AS "car_id!",
+            maintenance.garage_id AS "garage_id!",
+            cars.make || ' ' || cars.model AS car_name,
+            garages.name AS garage_name,
+            maintenance.service_type,
+            maintenance.scheduled_date
+        FROM maintenance
+        JOIN cars ON maintenance.car_id = cars.id
+        JOIN garages ON maintenance.garage_id = garages.id
+        WHERE maintenance.id = ?
+        "#,
+        maintenance_id
+    )
+    .fetch_optional(&data.pool)
+    .await
+    {
+        Ok(Some(record)) => HttpResponse::Ok().json(record),
+        Ok(None) => {
+            warn!("Maintenance with ID {} not found", maintenance_id);
+            HttpResponse::NotFound().json(json!({
+                "error": "Maintenance not found"
+            }))
+        }
+        Err(err) => {
+            error!("Failed to fetch maintenance with ID {}: {:?}", maintenance_id, err);
+            HttpResponse::InternalServerError().json(json!({
+                "error": "Failed to fetch maintenance",
+                "details": err.to_string()
+            }))
+        }
+    }
+}
 
 pub async fn create_maintenance(
     data: web::Data<AppState>,

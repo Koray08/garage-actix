@@ -8,7 +8,7 @@ use app_state::AppState;
 use controllers::{
     car_controller::{create_car, get_all_cars, delete_car, edit_car},
     garage_controller::{create_garage, get_all_garages, edit_garage, delete_garage, get_single_garage},
-    maintenance_controller::{create_maintenance, get_all_maintenances, delete_maintenance, edit_maintenance, monthly_requests_report},
+    maintenance_controller::{create_maintenance, get_all_maintenances, get_maintenance_by_id,  delete_maintenance, edit_maintenance, monthly_requests_report},
 };
 use sqlx::SqlitePool;
 use env_logger::Env;
@@ -47,6 +47,7 @@ async fn main() -> std::io::Result<()> {
             .route("/cars/{id}", web::delete().to(delete_car))
             .route("/maintenance", web::get().to(get_all_maintenances))
             .route("/maintenance", web::post().to(create_maintenance)) 
+            .route("/maintenance/{id}", web::get().to(get_maintenance_by_id))
             .route("/maintenance/{id}", web::put().to(edit_maintenance))
             .route("/maintenance/{id}", web::delete().to(delete_maintenance)) 
             .route("/maintenance/monthlyRequestsReport", web::get().to(monthly_requests_report)) 
