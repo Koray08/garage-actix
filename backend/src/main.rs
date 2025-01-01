@@ -8,12 +8,14 @@ use app_state::AppState;
 use controllers::{
     car_controller::{create_car, get_all_cars, delete_car, edit_car},
     garage_controller::{create_garage, get_all_garages, edit_garage, delete_garage, get_single_garage},
-    maintenance_controller::{create_maintenance, get_all_maintenances, delete_maintenance, edit_maintenance},
+    maintenance_controller::{create_maintenance, get_all_maintenances, delete_maintenance, edit_maintenance, monthly_requests_report},
 };
 use sqlx::SqlitePool;
+use env_logger::Env;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
     let database_url = "sqlite:data/database.db";
     
     let pool = SqlitePool::connect(database_url)
@@ -47,7 +49,8 @@ async fn main() -> std::io::Result<()> {
             .route("/maintenance", web::post().to(create_maintenance)) 
             .route("/maintenance/{id}", web::put().to(edit_maintenance))
             .route("/maintenance/{id}", web::delete().to(delete_maintenance)) 
-    })
+            .route("/maintenance/monthlyRequestsReport", web::get().to(monthly_requests_report)) 
+        })
     .bind("127.0.0.1:8088")?
     .run()
     .await

@@ -2,7 +2,7 @@ use crate::app_state::AppState;
 use crate::models::car::{Car, CreateCarRequest};
 use actix_web::{web, HttpResponse, Responder};
 use serde_json::json;
-use log::{debug, error, info};
+use log::{error, info};
 
 pub async fn create_car(
     data: web::Data<AppState>,

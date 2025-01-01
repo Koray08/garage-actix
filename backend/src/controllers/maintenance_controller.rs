@@ -1,5 +1,5 @@
 use crate::app_state::AppState; 
-use crate::models::maintenance::{CreateMaintenanceDTO, ResponseMaintenanceDTO, Maintenance};
+use crate::models::maintenance::{CreateMaintenanceDTO, ResponseMaintenanceDTO};
 use actix_web::{web, HttpResponse, Responder}; 
 use crate::models::maintenance::{UpdateMaintenanceDTO};
 use serde_json::json;
@@ -185,6 +185,83 @@ pub async fn delete_maintenance(
             HttpResponse::InternalServerError().json(json!({
                 "error": "Failed to delete maintenance",
                 "details": err.to_string(),
+            }))
+        }
+    }
+}
+
+pub async fn monthly_requests_report(
+    query: web::Query<HashMap<String, String>>,
+    data: web::Data<AppState>,
+) -> impl Responder {
+    let garage_id = match query.get("garageId").and_then(|v| v.parse::<i64>().ok()) {
+        Some(id) => id,
+        None => {
+            return HttpResponse::BadRequest().json(json!({
+                "error": "Missing or invalid garageId parameter"
+            }));
+        }
+    };
+
+    let start_month = query.get("startMonth").map(String::from).unwrap_or_default();
+    if start_month.is_empty() {
+        return HttpResponse::BadRequest().json(json!({
+            "error": "Missing startMonth parameter"
+        }));
+    }
+
+    let end_month = query.get("endMonth").map(String::from).unwrap_or_default();
+    if end_month.is_empty() {
+        return HttpResponse::BadRequest().json(json!({
+            "error": "Missing endMonth parameter"
+        }));
+    }
+
+    info!(
+        "Generating monthly requests report for garageId: {}, startMonth: {}, endMonth: {}",
+        garage_id, start_month, end_month
+    );
+
+    match sqlx::query!(
+        r#"
+        SELECT
+            strftime('%Y', scheduled_date) AS year,
+            strftime('%m', scheduled_date) AS month,
+            COUNT(*) AS requests
+        FROM maintenance
+        WHERE garage_id = ? 
+          AND strftime('%Y-%m', scheduled_date) BETWEEN ? AND ?
+        GROUP BY year, month
+        ORDER BY year, month
+        "#,
+        garage_id,
+        start_month,
+        end_month
+    )
+    .fetch_all(&data.pool)
+    .await
+    {
+        Ok(records) => {
+            let report: Vec<serde_json::Value> = records
+                .into_iter()
+                .map(|record| {
+                    json!({
+                        "yearMonth": {
+                            "year": record.year.unwrap_or_default(),
+                            "month": record.month.unwrap_or_default().trim(), 
+                        },
+                        "requests": record.requests,
+                    })
+                })
+                .collect();
+
+            HttpResponse::Ok().json(report)
+        }
+        Err(err) => {
+            error!("Failed to generate monthly requests report: {:?}", err);
+            HttpResponse::InternalServerError().json(json!({
+                "error": "Failed to generate monthly requests report",
+                "details": err.to_string()
             }))
         }
     }

@@ -1,6 +1,7 @@
-use crate::{app_state::AppState, models::garage::{CreateGarageRequest, Garage}};
+use std::collections::HashMap;
+use crate::{app_state::AppState, models::garage::{CreateGarageRequest, Garage, }};
 use actix_web::{web, HttpResponse, Responder};
-use uuid::Uuid;
+use log::{error, info};
 use serde::Deserialize;
 
 pub async fn get_all_garages(data: web::Data<AppState>) -> impl Responder {
