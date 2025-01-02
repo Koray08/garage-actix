@@ -2,7 +2,7 @@
 target/
 *~
 .env
-data/*.db
+backend/data/*.db
 
 # Frontend
 logs

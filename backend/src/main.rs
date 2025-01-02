@@ -12,13 +12,21 @@ use controllers::{
 };
 use sqlx::SqlitePool;
 use env_logger::Env;
+use dotenv::dotenv;
+use std::env;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    // Load the .env file
+    dotenv().ok();
+
     env_logger::init_from_env(Env::default().default_filter_or("info"));
-    let database_url = "sqlite:data/database.db";
+
+    // Load DATABASE_URL from the environment or fallback to default
+    let database_url = env::var("DATABASE_URL")
+        .unwrap_or_else(|_| "sqlite:data/database.db".to_string());
     
-    let pool = SqlitePool::connect(database_url)
+    let pool = SqlitePool::connect(&database_url)
         .await
         .expect("Failed to create pool.");
 
