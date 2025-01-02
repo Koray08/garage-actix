@@ -1,0 +1,9 @@
+# FrontEnd
+cd frontend
+serve .
+
+# BackEnd
+cd backend
+touch data/database.db
+cargo sqlx migrate run
+cargo run
