@@ -7,7 +7,7 @@ use actix_cors::Cors;
 use app_state::AppState;
 use controllers::{
     car_controller::{create_car, get_all_cars, delete_car, edit_car},
-    garage_controller::{create_garage, get_all_garages, edit_garage, delete_garage, get_single_garage},
+    garage_controller::{create_garage, get_all_garages, edit_garage, delete_garage, get_single_garage, get_garage_report},
     maintenance_controller::{create_maintenance, get_all_maintenances, get_maintenance_by_id,  delete_maintenance, edit_maintenance, monthly_requests_report},
 };
 use sqlx::SqlitePool;
@@ -36,6 +36,8 @@ async fn main() -> std::io::Result<()> {
                     .allowed_headers(vec![actix_web::http::header::CONTENT_TYPE])
                     .max_age(3600),
             )
+            .route("/garages/dailyAvailabilityReport", web::get().to(get_garage_report))
+            .route("/maintenance/monthlyRequestsReport", web::get().to(monthly_requests_report)) 
             .route("/garages", web::get().to(get_all_garages))
             .route("/garages", web::post().to(create_garage))
             .route("/garages/{id}", web::delete().to(delete_garage)) 
@@ -50,7 +52,6 @@ async fn main() -> std::io::Result<()> {
             .route("/maintenance/{id}", web::get().to(get_maintenance_by_id))
             .route("/maintenance/{id}", web::put().to(edit_maintenance))
             .route("/maintenance/{id}", web::delete().to(delete_maintenance)) 
-            .route("/maintenance/monthlyRequestsReport", web::get().to(monthly_requests_report)) 
         })
     .bind("127.0.0.1:8088")?
     .run()
